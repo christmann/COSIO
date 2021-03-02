@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="stylesheet.css" />
+    <link rel="stylesheet" href="fancybutton.css" />
+    <link rel="stylesheet" href="toggleswitch.css" />
+    <link rel="stylesheet" href="spinner.css" />
+    <link rel="stylesheet" href="chartist.min.css" />
+    <link rel="stylesheet" href="rangeSlider.css" />
+    <link rel="stylesheet" href="textinput.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body id="grad">
+    <div class="navbar">
+      <a href="#" style="padding-bottom: 3px; padding-top: 7px">
+        <img src="logocosio.svg" width="40px" height="40px" />
+      </a>
+      <a href="index.html">
+        <img style="float: left" src="home.svg" width="30px" height="30px" />
+        <p>DASHBOARD</p>
+      </a>
+      <a href="settings.html" class="active">
+        <img style="float: left" src="cog.svg" width="30px" height="30px" />
+        <p>SETTINGS</p>
+      </a>
+    </div>
+    <div class="flex-container">
+      <div class="full-size-widget">
+        <div class="label-header">
+          <div
+            style="
+              float: left;
+              margin-top: 12px;
+              margin-right: 20px;
+              height: 100%;
+              text-align: center;
+            "
+          >
+            <img
+              type="image/svg+xml"
+              class="wifi-icon"
+              src="wifi.svg"
+              width="30"
+              height="30"
+            />
+          </div>
+          <div style="float: left; margin-top: 4px">
+              <p>NETWORK</p>
+          </div>
+          <div style="float: right; margin-right: 7px">
+            <button
+              class="button"
+              onclick="saveNetwork()"
+              style="margin-top: 7px"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+        <div class="wifi-settings">
+          <table id="status" style="font-size: 20px">
+            <tr>
+              <td>Selected SSID</td>
+              <td id="ssid">loading</td>
+            </tr>
+            <tr>
+              <td>WiFi Password</td>
+              <td>
+                <input
+                  class="form__field"
+                  type="password"
+                  id="password"
+                  name="password"
+                  minlength="8"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>mDNS Name</td>
+              <td>
+                <input class="form__field" type="text" id="mdns" name="dnsname" placeholder="" />
+              </td>
+            </tr>
+            <tr>
+              <td>Use DHCP</td>
+              <td>
+                <label class="switch">
+                  <input
+                    id="dhcp"
+                    onclick="toggleIpSettings(this)"
+                    type="checkbox"
+                    value="0"
+                  />
+                  <span class="slider round"></span>
+                </label>
+              </td>
+            </tr>
+          </table>
+          <table id="status-network" style="font-size: 20px">
+            <tr>
+              <td>IP Address</td>
+              <td>
+                <input
+                  class="form__field"
+                  type="text"
+                  id="staticIpAddress"
+                  name="ipAddress"
+                  placeholder=""
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Subnet</td>
+              <td>
+                <input
+                  class="form__field"
+                  type="text"
+                  id="staticSubnet"
+                  name="subnet"
+                  placeholder=""
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Gateway</td>
+              <td>
+                <input
+                  class="form__field"
+                  type="text"
+                  id="staticGateway"
+                  name="ipGateway"
+                  placeholder=""
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>DNS Server</td>
+              <td>
+                <input class="form__field" type="text" id="staticDns" name="ipDns" placeholder="" />
+              </td>
+            </tr>
+          </table>
+          <div
+            style="height: 100px"
+            class="ct-chart-signal ct-perfect-fourth"
+          ></div>
+        </div>
+        <div
+          style="
+            height: calc(100% - 60px);
+            width: 5px;
+            background-color: var(--text-color-dark);
+          "
+        ></div>
+        <div style="width: calc(50% - 2.5px)">
+          <div class="wifi-scan" onclick="scanForNetworks()" id="wifi-scan">
+            <img
+              class="scanicon"
+              src="wifiscan.svg"
+              style="margin-top: 25%"
+              width="100"
+              height="100"
+            />
+            <h3 style="color: #b1b1b1" class="wifi-scan-label">
+              Scan for Networks
+            </h3>
+          </div>
+          <div id="wifi-scan-rescan" class="wifi-scan-rescan">
+            <img
+              class="scanicon"
+              style="
+                margin-top: 8px;
+                margin-right: 10px;
+                -webkit-filter: drop-shadow(3px 3px 2px rgba(0, 0, 0, 0.7));
+                filter: drop-shadow(0px 0px 2px rgba(0, 0, 0, 0.7));
+              "
+              src="wifiscan.svg"
+              width="30"
+              height="30"
+            />
+            <p
+              style="
+                margin: 0;
+                color: var(--text-color-light);
+                font-size: 20px;
+                line-height: 47px;
+              "
+            >
+              START NEW SCAN
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="normal-size-widget">
+        <div class="label-header">
+          <div
+            style="
+              float: left;
+              margin-top: 12px;
+              margin-right: 20px;
+              height: 100%;
+              text-align: center;
+            "
+          >
+            <img
+              type="image/svg+xml"
+              class="co2-icon"
+              src="cloud.svg"
+              width="30"
+              height="30"
+            />
+          </div>
+          <div style="float: left; margin-top: 4px">
+            <p>CO<sub>2</sub> THRESHOLD</p>
+          </div>
+          <div style="float: right; margin-right: 7px">
+            <button
+              class="button"
+              onclick="saveSensor()"
+              style="margin-top: 7px"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+        <div class="sensor-settings" style="width: 100%">
+          <div
+            class="sensor-settings-info"
+            style="
+              padding-left: 40px;
+              padding-right: 40px;
+              margin-top: 20px;
+              margin-bottom: 10px;
+            "
+          >
+            <table
+              id="status"
+              style="
+                font-size: 12px;
+                width: 100%;
+                margin-bottom: 20px;
+                text-align: center;
+                border-style: solid;
+                border-color: #fcba03;
+                border-width: 5px;
+              "
+            >
+              <tr>
+                <td>450 ppm</td>
+                <td>Outdoor air quality</td>
+              </tr>
+              <tr>
+                <td>800 ppm</td>
+                <td>High indoor air quality</td>
+              </tr>
+              <tr>
+                <td>1000 ppm</td>
+                <td>Acceptable indoor air quality</td>
+              </tr>
+              <tr>
+                <td>1500 ppm</td>
+                <td>Bad indoor air quality. Can cause drowsiness</td>
+              </tr>
+              <tr>
+                <td>2000 ppm</td>
+                <td>Elevated infection risk</td>
+              </tr>
+            </table>
+          </div>
+          
+          <div
+            class="slider-component"
+            style="
+              text-align: center;
+              padding-left: 20px;
+              padding-right: 25px;
+              padding-block-start: 50px;
+              height: 70px;
+            "
+          >
+            <output for="slider" style="display: block; color: #ffffff"
+              >0</output
+            >
+            <input
+              id="slider"
+              name="slider"
+              type="range"
+              min="900"
+              max="5000"
+              step="50.0"
+              style="display: block; width: 100%"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="normal-size-widget">
+        <div class="label-header">
+          <div
+            style="
+              float: left;
+              margin-top: 12px;
+              margin-right: 20px;
+              height: 100%;
+              text-align: center;
+            "
+          >
+            <img
+              type="image/svg+xml"
+              class="mqtt-icon"
+              src="mqtt.svg"
+              width="30"
+              height="30"
+            />
+          </div>
+          <div style="float: left; margin-top: 4px"><p>MQTT</p></div>
+          <div style="float: right; margin-right: 7px">
+            <button class="button" onclick="saveMqtt()" style="margin-top: 7px">
+              Save
+            </button>
+          </div>
+        </div>
+        <div class="mqtt-settings" style="width: 100%">
+          <table id="status" style="font-size: 20px; width: 100%">
+            <tr>
+              <td>Enabled</td>
+              <td>
+                <label class="switch">
+                  <input id="mqttEnabled" type="checkbox" value="0" />
+                  <span class="slider round"></span>
+                </label>
+              </td>
+            </tr>
+            <tr>
+              <td>Broker Address</td>
+              <td>
+                <input class="form__field" type="text" id="brokerAddress" name="brokerAddress" />
+              </td>
+            </tr>
+            <tr>
+              <td>Broker Port</td>
+              <td>
+                <input class="form__field" type="text" id="brokerPort" name="brokerPort" />
+              </td>
+            </tr>
+            <tr>
+              <td>Username</td>
+              <td>
+                <input class="form__field" type="text" id="mqttUsername" name="mqttUsername" />
+              </td>
+            </tr>
+            <tr>
+              <td>Password</td>
+              <td>
+                <input
+                  class="form__field"
+                  type="text"
+                  id="mqttPassword"
+                  name="mqttPassword"
+                  placeholder="Enter MQTT Password"
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>Publish Topic Prefix</td>
+              <td>
+                <input class="form__field" type="text" id="publishTopic" name="publishTopic" />
+              </td>
+            </tr>
+            <tr>
+              <td>Publish interval</td>
+              <td>
+                <input
+                  class="form__field"
+                  type="text"
+                  id="publishInterval"
+                  name="publishInterval"
+                />
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div class="normal-size-widget">
+        <div class="label-header">
+          <div
+            style="
+              float: left;
+              margin-top: 12px;
+              margin-right: 20px;
+              height: 100%;
+              text-align: center;
+            "
+          >
+            <img
+              type="image/svg+xml"
+              class="co2-icon"
+              src="cloud.svg"
+              width="30"
+              height="30"
+            />
+          </div>
+          <div style="float: left; margin-top: 4px"><p>CALIBRATION</p></div>
+          <div style="float: right; margin-right: 7px">
+            <button
+              class="button"
+              onclick="saveCalibration()"
+              style="margin-top: 7px"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+
+        <table id="status" style="font-size: 20px; width: 100%">
+          <tr>
+            <td>
+              Manual zero point calibration
+              <p style="font-size: 11px">
+                The sensor needs to be in an environment with ~400 ppm CO<sub
+                  >2</sub
+                >
+                in order to perform the <i>Zero Point Calibration</i>
+              </p>
+              <p style="font-size: 11px">When switched on:
+              </br>
+                1. Turn off sensor</br>
+                2. Expose sensor to fresh air (best if taken outside)</br>
+                3. Power on the sensor</br>
+                4. Wait twenty minutes for calibration to complete</br>
+              </p>
+              <p style="font-size: 11px">
+                It is recommended to calibrate the sensor at least once every six months
+              </p>
+            </td>
+            <td style="text-align: center;">
+              <label class="switch">
+                <input id="poweronCalibrate" type="checkbox" value="0" />
+                <span class="slider round"></span>
+              </label>
+            </td>
+          </tr>
+          <td>
+            Automatic Baseline Correction
+            <p style="font-size: 11px">
+              The <i>Automatic Baseline Correction</i> takes the lowest CO<sub>2</sub>
+              value measured in 24h as zero point reference. 
+
+            </p>
+            <p style="font-size: 11px">
+              This feature is only usable if the sensor is exposed to 
+              fresh air every day. We recommend to disable the <i>Automatic Baseline Correction</i>
+            </p>
+          </td>
+          <td style="text-align: center;">
+            <label class="switch">
+              <input id="automaticBaselineCorrection" type="checkbox" value="0" />
+              <span class="slider round"></span>
+            </label>
+          </td>
+        </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+  <footer style="padding-top: 100px">
+    <div class="footer-div">
+      <p style="color: var(--text-color-light)">
+        &copy; 2021 christmann informationstechnik + medien GmbH &amp; Co. KG -
+        CO<sub>2</sub> Sensor Module
+      </p>
+    </div>
+  </footer>
+
+  <script src="configInterface.js"></script>
+  <script src="chartist.min.js"></script>
+  <script>
+    const slider = document.querySelector("#slider");
+    const output = document.querySelector("output");
+    document.addEventListener("DOMContentLoaded", function () {
+      output.value = slider.value + " ppm";
+    });
+
+    slider.addEventListener("input", function () {
+      output.value = slider.value + " ppm";
+    });
+
+    const dhcpsettings = document.getElementById("status-network").innerHTML;
+
+    var chart_signal = new Chartist.Line(
+      ".ct-chart-signal",
+      {
+        labels: ["Signal_quality"],
+        series: [[]],
+      },
+      {
+        showArea: true,
+        showPoint: false,
+        height: 140,
+        width: 670,
+        fullWidth: true,
+        chartPadding: {
+          right: 10,
+        },
+        lineSmooth: Chartist.Interpolation.simple({
+          divisor: 2,
+          fillHoles: false,
+        }),
+        low: 0,
+        axisY: {
+          type: Chartist.FixedScaleAxis,
+          ticks: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100],
+          low: 0,
+        },
+      },
+      [
+        [
+          "screen and (max-width: 480px)",
+          {
+            width: 400,
+          },
+        ],
+      ]
+    );
+
+    var updateInterval = 1000;
+
+    var x = setInterval(async function () {
+      let strength = parseInt(await getSignalStrength());
+      strength = 2 * (strength + 100);
+      chart_signal.data.series[0].push(strength);
+      if (chart_signal.data.series[0].length > 50) {
+        chart_signal.data.series[0].shift();
+      }
+      chart_signal.update();
+    }, updateInterval);
+
+    async function toggleIpSettings(checkbox) {
+      var ipSettings = document.getElementById("status-network");
+      if (checkbox.checked) {
+        const viewOnly =
+          "<tr> <td>IP Address</td> <td>" +
+          (await getConfigParameter("currentIpAddress")) +
+          "</td> </tr> <tr> <td>Subnet</td> <td>" +
+          (await getConfigParameter("currentSubnet")) +
+          "</td> </tr> <tr> <td>Gateway</td> <td>" +
+          (await getConfigParameter("currentGateway")) +
+          "</td> </tr> <tr> <td>DNS Server</td> <td>" +
+          (await getConfigParameter("currentDns")) +
+          "</td> </tr>";
+
+        ipSettings.innerHTML = viewOnly;
+      } else {
+        ipSettings.innerHTML = dhcpsettings;
+        document
+          .getElementById("staticIpAddress")
+          .setAttribute("value", await getConfigParameter("ipAddress"));
+        document
+          .getElementById("staticSubnet")
+          .setAttribute("value", await getConfigParameter("subnet"));
+        document
+          .getElementById("staticGateway")
+          .setAttribute("value", await getConfigParameter("gateway"));
+        document
+          .getElementById("staticDns")
+          .setAttribute("value", await getConfigParameter("dns"));
+      }
+    }
+
+    async function connectTo(ssid_, security) {
+      var ssid = document.getElementById("ssid");
+      ssid.innerHTML = ssid_;
+      await refreshPasswordField(ssid_, security);
+    }
+
+    function scanForNetworks() {
+      var wifiscan = document.getElementById("wifi-scan");
+      wifiscan.innerHTML = '<div class="loader" style="margin-top: 200px;">Loading...</div>';
+      wifiscan.setAttribute("onclick", "");
+      wifiscan.setAttribute("style", "display: flex;");
+
+      var xhttp = new XMLHttpRequest();
+      var url = "getwifinetworks";
+
+      const lockOpen =
+        '<img type="image/svg+xml" class="padlock" src="lock-open.svg" width="30" height="30"/>';
+      const lockClosed =
+        '<img type="image/svg+xml" class="padlock" src="lock-closed.svg" width="30" height="30"/>';
+
+      xhttp.onreadystatechange = function () {
+        if (xhttp.readyState == 4 && xhttp.status == 200) {
+          var json = JSON.parse(xhttp.responseText);
+          var output =
+            '<table  id="status" style="font-size: 16px" ><tr style="color: var(--text-color-light); background-color: var(--secondary);"><td style="width: 40px;"></td><td>SSID</td><td>Strength</td><td>Channel</td><td></td><td></td></tr>';
+          for (var i = 0; i < json.length; i++) {
+            var network = json[i];
+            var lock = lockClosed;
+            if (network.encryption === "NONE") {
+              lock = lockOpen;
+            }
+            output +=
+              '<tr><td style="width: 40px;">' +
+              lock +
+              "</td>" +
+              "<td>" +
+              network.ssid +
+              "</td>" +
+              "<td>" +
+              network.rssi +
+              " dBm" +
+              "</td>" +
+              "<td>" +
+              network.channel +
+              '</td><td><button class="button" style="font-size: medium;" onclick="connectTo(' +
+              "'" +
+              network.ssid +
+              "','" +
+              network.encryption +
+              "'" +
+              ')">Select</button></td></tr>';
+          }
+          output += "</table>";
+          console.log(output);
+          var wifiscan = document.getElementById("wifi-scan");
+          wifiscan.innerHTML = output;
+          wifiscan.setAttribute("style", "overflow-y: scroll");
+          document
+            .getElementById("wifi-scan-rescan")
+            .setAttribute("style", "opacity: 1;");
+          document
+            .getElementById("wifi-scan-rescan")
+            .setAttribute("onclick", "scanForNetworks()");
+        }
+      };
+      xhttp.open("GET", url, true);
+      xhttp.send();
+    }
+
+    async function refreshPasswordField(ssid, security) {
+      var password = document.getElementById("password");
+      if (security === "NONE") {
+        password.setAttribute("placeholder", "No Password needed");
+        password.setAttribute("disabled", "true");
+        return;
+      } else {
+        password.removeAttribute("disabled");
+      }
+      const pwset = await getConfigParameter("passwordStored", ssid);
+      if (pwset === "true") {
+        password.setAttribute("placeholder", "Password is already saved");
+      } else {
+        password.setAttribute("placeholder", "Please enter password");
+      }
+    }
+
+    async function testMqtt() {}
+
+    async function saveMqtt() {
+      var mqttEnabledCtrl = document.getElementById("mqttEnabled");
+      if (mqttEnabledCtrl.checked) {
+        await setConfigParameter("enabled", "true");
+      } else {
+        await setConfigParameter("enabled", "false");
+      }
+      await setConfigParameter(
+        "brokerAddress",
+        document.getElementById("brokerAddress").value
+      );
+      await setConfigParameter(
+        "username",
+        document.getElementById("mqttUsername").value
+      );
+      await setConfigParameter(
+        "password",
+        document.getElementById("mqttPassword").value
+      );
+      await setConfigParameter(
+        "brokerPort",
+        document.getElementById("brokerPort").value
+      );
+      await setConfigParameter(
+        "topicPrefix",
+        document.getElementById("publishTopic").value
+      );
+      await setConfigParameter(
+        "updateInterval",
+        document.getElementById("publishInterval").value
+      );
+      alert("MQTT Settings saved! This may take a while.\nIf connection failed MQTT will be disabled!\nCheck Serial outupt if connection has failed");
+    }
+
+    async function saveSensor() {
+      await setConfigParameter(
+        "ppmMax",
+        document.getElementById("slider").value
+      );
+      alert(
+        "Settings saved! PPM Threshold was set to " +
+          document.getElementById("slider").value
+      );
+    }
+
+    async function saveCalibration(){
+      var poweronCalibrate = document.getElementById("poweronCalibrate");
+      if (poweronCalibrate.checked) {
+        await setConfigParameter("calibrateOnPwr", "true");
+      } else {
+        await setConfigParameter("calibrateOnPwr", "false");
+      }
+
+      var automaticBaselineCorrection = document.getElementById("automaticBaselineCorrection");
+      if (automaticBaselineCorrection.checked) {
+        await setConfigParameter("useInbuildCalibration", "true");
+      } else {
+        await setConfigParameter("useInbuildCalibration", "false");
+      }
+      alert("Settings saved! Restart device to take effect.");
+
+    }
+
+    async function saveNetwork() {
+      await setConfigParameter(
+        "ssid",
+        document.getElementById("ssid").innerHTML
+      );
+      await setConfigParameter("mdns", document.getElementById("mdns").value);
+      const password = document.getElementById("password").value;
+      if (password !== "") {
+        await setConfigParameter(
+          "password",
+          document.getElementById("password").value
+        );
+      }
+      const dhcpEnabled = document.getElementById("dhcp");
+      if (dhcp.checked) {
+        await setConfigParameter("dhcp", "true");
+      } else {
+        await setConfigParameter("dhcp", "false");
+        await setConfigParameter(
+          "ipAddress",
+          document.getElementById("staticIpAddress").value
+        );
+        await setConfigParameter(
+          "subnet",
+          document.getElementById("staticSubnet").value
+        );
+        await setConfigParameter(
+          "gateway",
+          document.getElementById("staticGateway").value
+        );
+        await setConfigParameter(
+          "dns",
+          document.getElementById("staticDns").value
+        );
+      }
+
+      alert("Settings saved! Restart device to take effect.");
+    }
+
+    async function fillWifiCreds() {
+      const ssid = await setInHtml("ssid", "ssid");
+      await refreshPasswordField(ssid);
+      document
+        .getElementById("mdns")
+        .setAttribute("value", await getConfigParameter("mdns"));
+    }
+
+    async function fillWifiIpSettings() {
+      var dhcp = document.getElementById("dhcp");
+      const useDhcp = await getConfigParameter("dhcp");
+      if (useDhcp != 0) {
+        dhcp.checked = true;
+      } else {
+        dhcp.checked = false;
+      }
+      toggleIpSettings(dhcp);
+    }
+
+    async function fillMqttSettings() {
+      var mqttEnabledCtrl = document.getElementById("mqttEnabled");
+      const mqttEnabled = await getConfigParameter("enabled");
+      if (mqttEnabled != 0) {
+        mqttEnabledCtrl.checked = true;
+      } else {
+        mqttEnabledCtrl.checked = false;
+      }
+      document
+        .getElementById("brokerAddress")
+        .setAttribute("value", await getConfigParameter("brokerAddress"));
+      document
+        .getElementById("brokerPort")
+        .setAttribute("value", await getConfigParameter("brokerPort"));
+      document
+        .getElementById("mqttUsername")
+        .setAttribute("value", await getConfigParameter("username"));
+      document
+        .getElementById("publishTopic")
+        .setAttribute("value", await getConfigParameter("topicPrefix"));
+      document
+        .getElementById("publishInterval")
+        .setAttribute("value", await getConfigParameter("updateInterval"));
+    }
+    
+    async function fillCalibration(){
+      var poweronCalibrate = document.getElementById("poweronCalibrate");
+      const calibrateOnPwr = await getConfigParameter("calibrateOnPwr");
+      if (calibrateOnPwr != 0) {
+        poweronCalibrate.checked = true;
+      } else {
+        poweronCalibrate.checked = false;
+      }
+
+      var automaticBaselineCorrection = document.getElementById("automaticBaselineCorrection");
+      const useInbuildCalibration = await getConfigParameter("useInbuildCalibration");
+      if (useInbuildCalibration != 0) {
+        automaticBaselineCorrection.checked = true;
+      } else {
+        automaticBaselineCorrection.checked = false;
+      }
+    }
+
+    async function fillSensorSettings() {
+      const slider = document.querySelector("#slider");
+      const output = document.querySelector("output");
+      const ppmMax = await getConfigParameter("ppmMax");
+      slider.value = ppmMax;
+      output.value = ppmMax + " ppm";
+    }
+
+    fillWifiCreds();
+    fillWifiIpSettings();
+    fillMqttSettings();
+    fillSensorSettings();
+    fillCalibration();
+  </script>
+</html>

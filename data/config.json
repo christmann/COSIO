@@ -1,0 +1,43 @@
+{
+  "wifi": {
+    "ssid": "CIM-Gast",
+    "password": "0517298760",
+    "apSsid": "CO2 Sensor",
+    "apPassword": "CIMcosio",
+    "mdns": "co2sensor",
+    "dhcp": true,
+    "ipAddress": "0.0.0.0",
+    "subnet": "0.0.0.0",
+    "gateway": "0.0.0.0",
+    "dns": "0.0.0.0"
+  },
+  "sensor": {
+    "id": "",
+    "name": "",
+    "senseInterval": 2,
+    "ppmMax": 1500,
+    "ppmNormal": 800,
+    "showTemperature": false,
+    "useInbuildCalibration": false,
+    "calibrateOnPwr": false,
+    "lastManualCalibration": 0
+  },
+  "ui": {
+    "tempUnit": "°C",
+    "humidUnit": "%",
+    "co2Unit": "ppm"
+  },
+  "led": {
+    "intensity": 100,
+    "displayMode": 0
+  },
+  "mqtt": {
+    "enabled": false,
+    "brokerAddress": "",
+    "brokerPort": 1883,
+    "username": "",
+    "password": "",
+    "topicPrefix": "CO2Sensor/",
+    "updateInterval": 10
+  }
+}

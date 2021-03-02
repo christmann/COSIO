@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="stylesheet.css" />
+    <link rel="stylesheet" href="chartist.min.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body id="grad">
+    <div class="navbar">
+      <a href="#" style="padding-bottom: 3px; padding-top: 7px">
+        <img src="logocosio.svg" width="40px" height="40px" />
+      </a>
+      <a href="index.html" class="active">
+        <img style="float: left" src="home.svg" width="30px" height="30px" />
+        <p>DASHBOARD</p>
+      </a>
+      <a href="settings.html">
+        <img style="float: left" src="cog.svg" width="30px" height="30px" />
+        <p>SETTINGS</p>
+      </a>
+    </div>
+    <div class="flex-container">
+      <div class="full-size-widget" style="width: 960px">
+        <div class="label-header">
+          <div
+            style="
+              float: left;
+              margin-top: 12px;
+              margin-right: 20px;
+              height: 100%;
+              text-align: center;
+            "
+          >
+            <img src="cloud.svg" width="30" height="30" />
+          </div>
+          <div style="float: left; margin-top: 4px">
+            <p>CO<sub>2</sub> LEVEL</p>
+          </div>
+          <div style="float: right; margin-right: 30px">
+            <p id="co2level">---</p>
+          </div>
+        </div>
+        <div class="ct-chart-co2 ct-perfect-fourth"></div>
+      </div>
+      <div style="width: 400px; height: 550px" class="normal-size-widget">
+        <div class="label-header">
+          <div
+            style="
+              float: left;
+              margin-top: 12px;
+              margin-right: 20px;
+              height: 100%;
+              text-align: center;
+            "
+          >
+            <img src="search.svg" width="30" height="30" />
+          </div>
+          <div style="float: left; margin-top: 4px"><p>STATUS</p></div>
+        </div>
+        <table id="status" style="font-size: 14px">
+          <tr>
+            <td>Sensor Name</td>
+            <td id="sensorName">loading</td>
+          </tr>
+          <tr>
+            <td>Maximum PPM</td>
+            <td id="ppmMax">loading</td>
+          </tr>
+          <tr>
+            <td>MQTT Connection</td>
+            <td id="mqttStatus">loading</td>
+          </tr>
+          <tr>
+            <td>Connected to</td>
+            <td id="ssid">loading</td>
+          </tr>
+          <tr>
+            <td>IP Address</td>
+            <td id="ipAddress">loading</td>
+          </tr>
+          <tr>
+            <td>mDNS Name</td>
+            <td id="mdns">loading</td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </body>
+  <footer>
+    <div class="footer-div">
+      <p style="color: var(--text-color-light)">
+        &copy; 2021 christmann informationstechnik + medien GmbH &amp; Co. KG -
+        CO<sub>2</sub> Sensor Module
+      </p>
+    </div>
+  </footer>
+
+  <script src="chartist.min.js"></script>
+  <script src="configInterface.js"></script>
+  <script>
+    var chart_co2 = new Chartist.Line(
+      ".ct-chart-co2",
+      {
+        labels: ["0 seconds"],
+        series: [[]],
+      },
+      {
+        showArea: true,
+        showPoint: false,
+        height: 500,
+        width: 940,
+        fullWidth: true,
+        chartPadding: {
+          right: 10,
+        },
+        lineSmooth: Chartist.Interpolation.simple({
+          divisor: 2,
+          fillHoles: false,
+        }),
+        low: 0,
+      },
+      [
+        [
+          "screen and (max-width: 480px)",
+          {
+            width: 400,
+          },
+        ],
+      ]
+    );
+
+    var updateInterval = 2000;
+
+    var x = setInterval(function () {
+      loadData("getsensordata", updateData);
+    }, updateInterval);
+
+    function loadData(url, callback) {
+      var xhttp = new XMLHttpRequest();
+      xhttp.onreadystatechange = function () {
+        if (this.readyState == 4 && this.status == 200) {
+          callback.apply(xhttp);
+        }
+      };
+      xhttp.open("GET", url, true);
+      xhttp.send();
+    }
+
+    var startSeconds = 0;
+    var maxXPoints = 1350; // 45 minutes
+
+    function updateData() {
+      var rescaleCharts;
+      if (window.innerWidth < 700) {
+        rescaleCharts = true;
+      }
+
+      if (startSeconds < maxXPoints * (updateInterval / 1000)) {
+        startSeconds = startSeconds + updateInterval / 1000;
+      }
+
+      var values = this.responseText.split(";");
+
+      if (chart_co2.data.series[0].length > maxXPoints) {
+        chart_co2.data.series[0].shift();
+      }
+      chart_co2.data.labels[0] = [startSeconds + "s"];
+      chart_co2.data.series[0].push(values[2]);
+
+      chart_co2.update();
+
+      document.getElementById("co2level").innerHTML = values[2] + " ppm";
+    }
+
+    function fillStatusWidget() {
+      setInHtml("name", "sensorName");
+      setInHtml("ppmMax", "ppmMax");
+      setInHtml("mqttStatus", "mqttStatus");
+      setInHtml("ssid", "ssid");
+      setInHtml("currentIpAddress", "ipAddress");
+      setInHtml("mdns", "mdns");
+    }
+
+    fillStatusWidget();
+  </script>
+</html>
