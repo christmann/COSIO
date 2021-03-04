@@ -1,7 +1,7 @@
 {
   "wifi": {
-    "ssid": "CIM-Gast",
-    "password": "0517298760",
+    "ssid": "",
+    "password": "",
     "apSsid": "CO2 Sensor",
     "apPassword": "CIMcosio",
     "mdns": "co2sensor",

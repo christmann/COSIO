@@ -296,26 +296,18 @@ void COSIO::setup()   {
 
 /* Main loop */
 void COSIO::loop() {
-  yield();
   server.handleClient();
-  yield();
   pixel->update();
-  yield();
   oled->update();
 
   if(SENSOR->update() && !SENSOR->isCalibrating){
-    yield();
     oled->showSensorData((String) SENSOR->ppm, (String) SENSOR->temperature, (String) SENSOR->humidity);
-    yield();
     oled->showStatus(WiFi.status() == WL_CONNECTED, isApMode, CONFIG->mqttEnabled && mqttClient.connected());
-    yield();
     pixel->displayPpm(SENSOR->ppm);
-    yield();
   }
 
   if (!wifiDisabled && WiFi.status() != WL_CONNECTED && !isApMode) {
     wifiConnect(!SENSOR->isCalibrating);
-     yield();
   }
 
   if (CONFIG->mqttEnabled && !isApMode && !SENSOR->isCalibrating) {
