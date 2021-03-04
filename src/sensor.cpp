@@ -91,6 +91,7 @@ void Sensor::startManualCalibration(){
   logger.printlog(logger.INFO, "Calibration was performeds");
 }
 
+
 bool Sensor::update(){
   /* start calibrating if enabled */
   if(isCalibrating && ((calibrationInit + CALIBRATE_TIME * 60000) < millis())){
