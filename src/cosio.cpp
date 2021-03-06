@@ -154,6 +154,7 @@ void COSIO::wifiConnect(bool displayStatus) {
       return;
     }
     logger.printlog(logger.WARN, "No WiFi SSID or password set! Entering Access Point mode");
+    WiFi.disconnect(true);
     WiFi.mode(WIFI_AP);
     WiFi.softAP(CONFIG->apSsid, CONFIG->apPassword);
     isApMode = true;
@@ -165,6 +166,7 @@ void COSIO::wifiConnect(bool displayStatus) {
     logger.printlog(logger.INFO, "Connecting To: " + CONFIG->ssid);
     if(displayStatus)
       oled->connectMessage();
+    WiFi.disconnect(true);
     if (!CONFIG->dhcpEnabled) {
       IPAddress ip, subnet, gateway, dns;
       bool parseStatus = true;
@@ -178,6 +180,9 @@ void COSIO::wifiConnect(bool displayStatus) {
       } else {
         logger.printlog(logger.ERROR, "Failed to parse IP settings, falling back to DHCP");
       }
+    }
+    if(isApMode){
+      WiFi.softAPdisconnect(true);
     }
     WiFi.mode(WIFI_STA);
     WiFi.begin(CONFIG->ssid, CONFIG->password);
@@ -198,6 +203,7 @@ void COSIO::wifiConnect(bool displayStatus) {
         oled->connectedMessage();
     } else {
       logger.printlog(logger.WARN, "Could not connect to configured WiFi! Entering Access Point mode");
+      WiFi.disconnect(true);
       WiFi.mode(WIFI_AP);
       WiFi.softAP(CONFIG->apSsid, CONFIG->apPassword);
       isApMode = true;
@@ -231,7 +237,7 @@ boolean COSIO::mqttReconnect() {
 void COSIO::setup()   {
   // set SW-Watchdog interval higher, due to reset cause 4
   ESP.wdtDisable();
-  ESP.wdtEnable(2000);
+  ESP.wdtEnable(4000);
 
   Serial.begin(115200);
   logger.printlog(logger.INFO, "Initializing system");
@@ -294,20 +300,33 @@ void COSIO::setup()   {
   logger.printlog(logger.INFO, "Device ready");
 }
 
+// unsigned long heapTime = 0;
+
 /* Main loop */
 void COSIO::loop() {
-  server.handleClient();
+  server.handleClient(); 
+  yield();
   pixel->update();
   oled->update();
+  yield();
+
+  // if (millis() - heapTime > 2000) {
+  //   uint32_t heap = ESP.getFreeHeap();
+  //   logger.printlog(logger.INFO, (String) heap);
+  //   heapTime = millis();
+  // }
 
   if(SENSOR->update() && !SENSOR->isCalibrating){
+    yield();
     oled->showSensorData((String) SENSOR->ppm, (String) SENSOR->temperature, (String) SENSOR->humidity);
     oled->showStatus(WiFi.status() == WL_CONNECTED, isApMode, CONFIG->mqttEnabled && mqttClient.connected());
     pixel->displayPpm(SENSOR->ppm);
+    yield();
   }
 
   if (!wifiDisabled && WiFi.status() != WL_CONNECTED && !isApMode) {
     wifiConnect(!SENSOR->isCalibrating);
+    yield();
   }
 
   if (CONFIG->mqttEnabled && !isApMode && !SENSOR->isCalibrating) {
@@ -320,6 +339,7 @@ void COSIO::loop() {
       }
     } else {
       mqttClient.loop();
+      yield();
 
       if (millis() - lastMqttPublish > (CONFIG->mqttUpdateInterval * 1000)) {
         lastMqttPublish = millis();
@@ -330,6 +350,7 @@ void COSIO::loop() {
         }
 
         mqttClient.publish((prefix + "co2").c_str(), ((String) SENSOR->ppm).c_str());
+        yield();
       }
     }
   }
