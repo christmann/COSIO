@@ -28,7 +28,7 @@
     "co2Unit": "ppm"
   },
   "led": {
-    "intensity": 100,
+    "intensity": 50,
     "displayMode": 0
   },
   "mqtt": {
