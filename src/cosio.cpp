@@ -258,7 +258,7 @@ void COSIO::setup()   {
  // initialize neopixel strip
   logger.printlog(logger.INFO, "Initializing LED strip");
   pixel = new NeoPxl();
-  pixel->setColor(255, 0, 0);
+  pixel->setColor(0, 0, 255);
 
   // initialize display
   oled = new Oled(&display);

@@ -14,7 +14,7 @@ NeoPxl::NeoPxl(){
 
   fadeJobActive = false;
   signalPulseActive = false;
-  
+
   signalMaxPulses = 10;
   signalFadeSpeed = 5;
   signalDuration = 10;
@@ -30,6 +30,7 @@ void NeoPxl::setColor(int r, int g, int b){
     strip.setPixelColor(i, currentColor);
   }
   fadeJobActive = false;
+  strip.show();
 }
 
 void NeoPxl::displayPpm(uint16_t ppm) {
