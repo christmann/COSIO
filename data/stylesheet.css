@@ -47,13 +47,6 @@ body {
   background-color: var(--text-color-dark);
 }
 
-@media screen and (max-width: 500px) {
-  .navbar a {
-    float: none;
-    display: block;
-  }
-}
-
 .footer-div {
   position: fixed;
   bottom: 0;

@@ -4,6 +4,20 @@
     <link rel="stylesheet" href="stylesheet.css" />
     <link rel="stylesheet" href="chartist.min.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      @media only screen and (max-width: 600px) {
+        body {
+          zoom: 0.7;
+          -ms-zoom: 0.7;
+          -webkit-zoom: 0.7;
+          -moz-transform: scale(0.7, 0.7);
+          -moz-transform-origin: left center;
+        }
+        .ct-chart-line {
+          width: 550px !important;
+        }
+      }
+    </style>
   </head>
   <body id="grad">
     <div class="navbar">
