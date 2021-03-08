@@ -19,6 +19,8 @@ class NeoPxl{
     int signalJobData[4];
     unsigned long fadeJobLastMillis;
     unsigned long signalJobLastMillis;
+    unsigned long ledRefreshTime;
+
     bool signalPulseActive;
 
     uint32_t currentColor;

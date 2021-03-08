@@ -10,8 +10,11 @@ NeoPxl::NeoPxl(){
   setColor(0, 0, 0);
   fadeJobLastMillis = millis();
   signalJobLastMillis = millis();
+  ledRefreshTime = millis();
+
   fadeJobActive = false;
   signalPulseActive = false;
+  
   signalMaxPulses = 10;
   signalFadeSpeed = 5;
   signalDuration = 10;
@@ -26,7 +29,6 @@ void NeoPxl::setColor(int r, int g, int b){
   for(int i = 0; i < strip.numPixels(); i++){
     strip.setPixelColor(i, currentColor);
   }
-  strip.show();
   fadeJobActive = false;
 }
 
@@ -56,7 +58,6 @@ void NeoPxl::displayPpm(uint16_t ppm) {
           strip.setPixelColor(led, strip.Color(0, 0, 0));
         }
       }
-      strip.show();
       break;
     case 2:
       ledsOn = map(ppm, Config::instance()->ppmNormal, Config::instance()->ppmMax, 1, strip.numPixels());
@@ -71,7 +72,6 @@ void NeoPxl::displayPpm(uint16_t ppm) {
           strip.setPixelColor(led, strip.Color(0, 0, 0));
         }
       }
-      strip.show();
       break;
   }
 }
@@ -136,7 +136,6 @@ void NeoPxl::processFadeJob() {
     for(int i = 0; i < strip.numPixels(); i++){
       strip.setPixelColor(i, currentColor);
     }
-    strip.show();
   } else{
     fadeJobActive = false;
   }
@@ -152,6 +151,8 @@ void NeoPxl::update(){
   // update signals
   processSignalJob();
 
-  // Force a show() to fix some of the LEDs being the wrong color after a while sometimes
-  strip.show();
+  if (millis() - ledRefreshTime > CO2_COLOR_FADE_DELAY) {
+    strip.show();
+    ledRefreshTime = millis();
+  }
 }

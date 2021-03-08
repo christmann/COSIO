@@ -237,7 +237,7 @@ boolean COSIO::mqttReconnect() {
 void COSIO::setup()   {
   // set SW-Watchdog interval higher, due to reset cause 4
   ESP.wdtDisable();
-  ESP.wdtEnable(4000);
+  ESP.wdtEnable(2000);
 
   Serial.begin(115200);
   logger.printlog(logger.INFO, "Initializing system");
@@ -300,21 +300,23 @@ void COSIO::setup()   {
   logger.printlog(logger.INFO, "Device ready");
 }
 
+/* --- uncomment for heap size logging --- */
 // unsigned long heapTime = 0;
+/* ----------------------------------------*/
 
 /* Main loop */
 void COSIO::loop() {
   server.handleClient(); 
-  yield();
-  pixel->update();
   oled->update();
-  yield();
+  pixel->update();
 
+  /* --- uncomment for heap size logging --- */
   // if (millis() - heapTime > 2000) {
   //   uint32_t heap = ESP.getFreeHeap();
   //   logger.printlog(logger.INFO, (String) heap);
   //   heapTime = millis();
   // }
+  /* ----------------------------------------*/
 
   if(SENSOR->update() && !SENSOR->isCalibrating){
     yield();
