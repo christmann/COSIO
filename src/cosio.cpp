@@ -63,7 +63,11 @@ void COSIO::serveConfigParameter(){
   } else if (key == "currentDns") {
     server.send(200, "text/plain", WiFi.dnsIP().toString()); 
     return;
-  } else if (key == "mqttStatus") {
+  } else if(key == "password"){
+    server.send(200, "text/plain","NO");
+    return;
+  } 
+  else if (key == "mqttStatus") {
     String mqttStatus = "Not enabled";
     if (CONFIG->mqttEnabled) {
       if (mqttClient.connected()) {
