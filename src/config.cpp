@@ -35,8 +35,8 @@ Config::Config() : configOptions{
     {"enabled", "mqtt", &mqttEnabled, BOOLEAN, 0, ""},
     {"brokerAddress", "mqtt", &mqttBrokerAddress, STRING, 0, ""},
     {"brokerPort", "mqtt", &mqttBrokerPort, U16, 1883, ""},
-    {"username", "mqtt", &mqttUsername, STRING, 0, ""},
-    {"password", "mqtt", &mqttPassword, STRING, 0, ""},
+    {"MqttUsername", "mqtt", &mqttUsername, STRING, 0, ""},
+    {"MqttPassword", "mqtt", &mqttPassword, STRING, 0, ""},
     {"topicPrefix", "mqtt", &mqttTopicPrefix, STRING, 0, "CO2Sensor/"},
     {"updateInterval", "mqtt", &mqttUpdateInterval, U16, 10, ""}
     // Remember to update CONFIG_OPTIONS_CNT in config.h when adding/removing config options!

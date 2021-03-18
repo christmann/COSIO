@@ -680,11 +680,11 @@
         document.getElementById("brokerAddress").value
       );
       await setConfigParameter(
-        "username",
+        "MqttUsername",
         document.getElementById("mqttUsername").value
       );
       await setConfigParameter(
-        "password",
+        "MqttPassword",
         document.getElementById("mqttPassword").value
       );
       await setConfigParameter(
@@ -805,7 +805,7 @@
         .setAttribute("value", await getConfigParameter("brokerPort"));
       document
         .getElementById("mqttUsername")
-        .setAttribute("value", await getConfigParameter("username"));
+        .setAttribute("value", await getConfigParameter("MqttUsername"));
       document
         .getElementById("publishTopic")
         .setAttribute("value", await getConfigParameter("topicPrefix"));

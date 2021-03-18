@@ -28,16 +28,22 @@
     "co2Unit": "ppm"
   },
   "led": {
-    "intensity": 50,
+    "intensity": 60,
     "displayMode": 0
   },
   "mqtt": {
     "enabled": false,
     "brokerAddress": "",
     "brokerPort": 1883,
-    "username": "",
-    "password": "",
+    "MqttUsername": "",
+    "MqttPassword": "",
     "topicPrefix": "CO2Sensor/",
     "updateInterval": 10
+  },
+  "firmware": {
+    "version": "1.1",
+    "codename": "europium",
+    "updateServer": "",
+    "autoUpdate": true
   }
 }
