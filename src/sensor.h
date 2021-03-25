@@ -7,6 +7,9 @@
 // calibration time in minutes
 #define CALIBRATE_TIME 20
 
+// lowest measurement
+#define LOWER_LIMIT 400
+
 #include <Arduino.h>
 #include "logger.h"
 #include "config.h"
@@ -32,6 +35,7 @@ class Sensor {
     Logger logger;
 
     bool isCali;
+    unsigned long lastSensorUpdate;
 
     #if CO2_SENSOR_TYPE == 1
 			SCD30 sensor;
@@ -39,7 +43,6 @@ class Sensor {
 			//D7 (To sensor Pin 6, sensor TXD), D8 (To sensor Pin 5, sensor RXD)
 			SoftwareSerial sensorSerial;
 			MHZ19 sensor;
-			unsigned long lastSensorUpdate;
 		#endif
 
     void startManualCalibration();

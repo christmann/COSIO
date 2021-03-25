@@ -2,7 +2,17 @@
 
 Sensor* Sensor::_instance = NULL;
 
-Sensor::Sensor() : 
+#if CO2_SENSOR_TYPE == 1
+  Sensor::Sensor(){
+    lastSensorUpdate = 0;
+    isCalibrating = false;
+    calibratedOnPwr = false;
+    ppm = 0;
+    temperature = 0;
+    humidity = 0;
+  }
+#elif CO2_SENSOR_TYPE == 2
+  Sensor::Sensor() :
   sensorSerial(D7, D8){
     lastSensorUpdate = 0;
     isCalibrating = false;
@@ -10,7 +20,9 @@ Sensor::Sensor() :
     ppm = 0;
     temperature = 0;
     humidity = 0;
-}
+  }
+#endif
+
 
 unsigned long calibrationInit = 0;
 
@@ -75,7 +87,8 @@ void Sensor::init(Oled* oled){
         delay(100);
       }
     }
-    // set inbuild auto-calibration
+    // set inbuild auto-calibratio
+
     sensor.autoCalibration(CONFIG->useInbuildCalibration, 24);
 
     logger.printlog(logger.INFO, "MH-Z19C CO2 Sensor initialized!");
@@ -109,6 +122,9 @@ bool Sensor::update(){
       }
       humidity = sensor.getHumidity();
       lastSensorUpdate = millis();
+      if(ppm < LOWER_LIMIT){
+        ppm = LOWER_LIMIT;
+      }
       return true;
     }
     return false;
@@ -118,11 +134,15 @@ bool Sensor::update(){
       yield();
       if (CONFIG->showTemperature) {
         temperature = sensor.getTemperature(false, true);
+        logger.printlog(logger.INFO, "TEMP: " + (String) temperature);
         yield();
       } else {
         temperature = 0;
       }
       lastSensorUpdate = millis();
+      if(ppm < LOWER_LIMIT){
+        ppm = LOWER_LIMIT;
+      }
       return true;
     }
     return false;
