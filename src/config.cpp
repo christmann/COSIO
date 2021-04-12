@@ -15,6 +15,7 @@ Config::Config() : configOptions{
     {"gateway", "wifi", &staticGateway, STRING, 0, "0.0.0.0"},
     {"dns", "wifi", &staticDns, STRING, 0, "0.0.0.0"},
     {"id", "sensor", &sensorId, STRING, 0, ""},
+    {"type", "sensor", &sensorType, U8, 2, ""},
     {"name", "sensor", &sensorName, STRING, 0, ""},
     //{"loginPassword", "sensor", &loginPassword, STRING, 0, "Passw0rd!"},
     {"ppmMax", "sensor", &ppmMax, U16, 1500, ""},

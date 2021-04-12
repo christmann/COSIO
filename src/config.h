@@ -7,7 +7,7 @@
 #include <EEPROM.h>
 #include "logger.h"
 
-#define CONFIG_OPTIONS_CNT	(35 - 5)
+#define CONFIG_OPTIONS_CNT	(36 - 5)
 #define MAX_CHAR_LENGTH 64
 
 class Config {
@@ -29,8 +29,8 @@ class Config {
       char defaultStr[25];
     };
 
-    Config(); // Singleton, so constructor is private
-    Config(const Config&); // Do not allow copy constructor
+    Config();
+    Config(const Config&);
 
     void setDefaultValues();
 
@@ -39,7 +39,7 @@ class Config {
     StaticJsonDocument<1536> document;
     struct configOption_t configOptions[CONFIG_OPTIONS_CNT];
 
-  public:  
+  public:
     static Config* instance() {
         if (!_instance)
             _instance = new Config();
@@ -69,6 +69,7 @@ class Config {
     String staticGateway;
     String staticSubnet;
     String staticDns;
+    uint8_t sensorType;
     String sensorId;
     String sensorName;
     //String loginPassword;

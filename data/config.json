@@ -12,6 +12,7 @@
     "dns": "0.0.0.0"
   },
   "sensor": {
+    "type": 2,
     "id": "",
     "name": "",
     "senseInterval": 2,

@@ -21,10 +21,25 @@ Sensor* Sensor::_instance = NULL;
     temperature = 0;
     humidity = 0;
   }
+#elif CO2_SENSOR_TYPE == 3
+  Sensor::Sensor() :
+  sensorSerial(D7, D8){
+    lastSensorUpdate = 0;
+    isCalibrating = false;
+    calibratedOnPwr = false;
+    ppm = 0;
+    temperature = 0;
+    humidity = 0;
+  }
 #endif
 
 
 unsigned long calibrationInit = 0;
+
+// modbus commands for SenseAir S8
+const byte readCO2[7] = {0xFE, 0X44, 0X00, 0X08, 0X02, 0X9F, 0X25};
+const byte disableABC[8] = {0xFE, 0x06, 0x00, 0x1F, 0x00, 0x00, 0xAC, 0x03};
+const byte enableABC[8] = {0xFE, 0x06, 0x00, 0x1F, 0x00, 0xB4, 0xAC, 0x74};
 
 void Sensor::calibrate(){
   calibrationInit = millis();
@@ -92,6 +107,38 @@ void Sensor::init(Oled* oled){
     sensor.autoCalibration(CONFIG->useInbuildCalibration, 24);
 
     logger.printlog(logger.INFO, "MH-Z19C CO2 Sensor initialized!");
+  #elif CO2_SENSOR_TYPE == 3
+    // initialize SenseAir S8 sensor
+    logger.printlog(logger.INFO, "Initializing SenseAir S8 CO2 sensor");
+    
+    sensorSerial.begin(9600);
+    delay(1000);
+
+    for(int i = 0; i < 20; i++){
+      if (!sensorSerial.available())
+      {
+        sensorSerial.write(readCO2, 7);
+        delay(200);
+      }
+      else{
+        logger.printlog(logger.INFO, "SenseAir S8 CO2 sensor initialized");
+        if(CONFIG->useInbuildCalibration){
+          if (!sendSenseairCommand(enableABC, true)) break;
+        }
+        else {
+          if (!sendSenseairCommand(disableABC, true)) break;
+        }
+        logger.printlog(logger.INFO, "Automatic Baseline Correction was configured");
+        return;
+      }
+    }
+
+    oled->hwError("Sensor error");
+    logger.printlog(logger.ERROR, "SenseAir S8 communication problem! Halting");
+    while (1) {
+      delay(100);
+    }
+
   #endif
 }
 
@@ -101,7 +148,7 @@ void Sensor::startManualCalibration(){
   #elif CO2_SENSOR_TYPE == 2
     sensor.calibrate();
   #endif
-  logger.printlog(logger.INFO, "Calibration was performeds");
+  logger.printlog(logger.INFO, "Calibration was performed");
 }
 
 
@@ -134,7 +181,6 @@ bool Sensor::update(){
       yield();
       if (CONFIG->showTemperature) {
         temperature = sensor.getTemperature(false, true);
-        logger.printlog(logger.INFO, "TEMP: " + (String) temperature);
         yield();
       } else {
         temperature = 0;
@@ -146,7 +192,87 @@ bool Sensor::update(){
       return true;
     }
     return false;
+  #elif CO2_SENSOR_TYPE == 3
+    if (millis() - lastSensorUpdate > (CONFIG->senseInterval * 1000)) {
+      lastSensorUpdate = millis();
+      int response[7];
 
+      while (!sensorSerial.available())
+      {
+        sensorSerial.write(readCO2, 7);
+        delay(50);
+      }
+
+      int timeout = 0;
+      while (sensorSerial.available() < 7 )
+      {
+        timeout++;
+        if (timeout > 10)
+        {
+          while (sensorSerial.available())
+            sensorSerial.read();
+
+          break;
+        }
+        delay(50);
+      }
+
+      for (int i = 0; i < 7; i++)
+      {
+        response[i] = sensorSerial.read();
+      }
+
+      ppm = response[3] * 256 + response[4];
+
+      if(ppm < LOWER_LIMIT){
+        ppm = LOWER_LIMIT;
+      }
+      return true;
+    }
+    return false;
   #endif
   return false;
 }
+
+#if CO2_SENSOR_TYPE == 3
+
+bool Sensor::sendSenseairCommand(const byte command[], bool validIfEchoed){
+  
+  logger.printlog(logger.INFO, "Sending bytes: ");
+  for (int i = 0; i < sizeof(command); i++) Serial.print(command[i], HEX);
+
+  while (!sensorSerial.available()) {
+    sensorSerial.write(command, sizeof(command));
+    delay(50);
+  }
+  
+  if(!validIfEchoed){
+    return true;
+  }
+
+  int timeout = 0;
+
+  while (sensorSerial.available() < sizeof(command) ) {
+    timeout++;
+    if (timeout > 10) {
+      while (sensorSerial.available()){
+        sensorSerial.read();
+      }
+      break;
+    }
+    delay(50);
+  }
+
+  logger.printlog(logger.INFO, "Recieved bytes: ");
+  
+  for (int i = 0; i < sizeof(command); i++) {
+    byte currentByte = sensorSerial.read();
+    Serial.print(currentByte, HEX);
+    if(command[i] != currentByte){
+      return false;
+    }
+  }
+  return true;
+}
+
+#endif

@@ -77,6 +77,10 @@
             <td id="sensorName">loading</td>
           </tr>
           <tr>
+            <td>Sensor Type</td>
+            <td id="sensorType">loading</td>
+          </tr>
+          <tr>
             <td>Maximum PPM</td>
             <td id="ppmMax">loading</td>
           </tr>
@@ -188,11 +192,24 @@
 
     function fillStatusWidget() {
       setInHtml("name", "sensorName");
+      getSensorType();
       setInHtml("ppmMax", "ppmMax");
       setInHtml("mqttStatus", "mqttStatus");
       setInHtml("ssid", "ssid");
       setInHtml("currentIpAddress", "ipAddress");
       setInHtml("mdns", "mdns");
+    }
+
+    async function getSensorType() {
+      var sensorType = await getConfigParameter("type");
+      var sensorTypeString;
+
+      if (sensorType == "1") sensorTypeString = "Sensirion SCD30";
+      else if (sensorType == "2") sensorTypeString = "Winsen MH-Z19c";
+      else if (sensorType == "3") sensorTypeString = "SenseAir S8 Residential";
+      else sensorTypeString = "not defined";
+
+      document.getElementById("sensorType").innerHTML = sensorTypeString;
     }
 
     fillStatusWidget();

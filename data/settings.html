@@ -413,7 +413,7 @@
               height="30"
             />
           </div>
-          <div style="float: left; margin-top: 4px"><p>CALIBRATION</p></div>
+          <div style="float: left; margin-top: 4px"><p id="cal-label">CALIBRATION</p></div>
           <div style="float: right; margin-right: 7px">
             <button
               class="button"
@@ -426,7 +426,7 @@
         </div>
 
         <table id="status" style="font-size: 20px; width: 100%">
-          <tr>
+          <tr id="manual-cali">
             <td>
               Manual zero point calibration
               <p style="font-size: 11px">
@@ -453,7 +453,7 @@
               </label>
             </td>
           </tr>
-          <td>
+          <td id="abc-description">
             Automatic Baseline Correction
             <p style="font-size: 11px">
               The <i>Automatic Baseline Correction</i> takes the lowest CO<sub>2</sub>
@@ -815,6 +815,21 @@
     }
     
     async function fillCalibration(){
+
+      var sensorType = await getConfigParameter("type");
+      var sensorTypeString = "";
+
+      if (sensorType == "1") sensorTypeString = "SCD30";
+      else if (sensorType == "2") sensorTypeString = "MH-Z19c";
+      else if (sensorType == "3"){
+        sensorTypeString = "SenseAir S8";
+        document.getElementById("abc-description").innerHTML = 'Automatic Baseline Correction<p style="font-size: 11px">The <i>Automatic Baseline Correction</i> takes care of the overtime measurement drift. The SenseAir S8 comes with an ABC period of 7.5 days.</p><p style="font-size: 11px">This feature is only usable if the sensor is exposed to fresh air every few days (best if sensor is exposed to fresh air every day). We recommend to enable the <i>Automatic Baseline Correction</i></p>';
+        document.getElementById("manual-cali").remove();
+      }
+      document.getElementById("cal-label").innerHTML = "CALIBRATION - " + sensorTypeString;
+
+      var poweronCalibrate = document.getElementById("poweronCalibrate");
+
       var poweronCalibrate = document.getElementById("poweronCalibrate");
       const calibrateOnPwr = await getConfigParameter("calibrateOnPwr");
       if (calibrateOnPwr != 0) {

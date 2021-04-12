@@ -3,6 +3,7 @@
 // Possible values for CO2_SENSOR_TYPE:
 //  1: SCD30
 //  2: MH-Z19B / MH-Z19C
+//  3: SenseAir S8
 #define CO2_SENSOR_TYPE	2
 // calibration time in minutes
 #define CALIBRATE_TIME 20
@@ -20,6 +21,8 @@
 #elif CO2_SENSOR_TYPE == 2
 	#include <SoftwareSerial.h>
 	#include <MHZ19.h>
+#elif CO2_SENSOR_TYPE == 3
+	#include <SoftwareSerial.h>
 #else
 	#error "Unknown sensor type defined (CO2_SENSOR_TYPE)"
 #endif
@@ -43,6 +46,10 @@ class Sensor {
 			//D7 (To sensor Pin 6, sensor TXD), D8 (To sensor Pin 5, sensor RXD)
 			SoftwareSerial sensorSerial;
 			MHZ19 sensor;
+    #elif CO2_SENSOR_TYPE == 3
+      //D7 (To sensor Pin 6, sensor TXD), D8 (To sensor Pin 5, sensor RXD)
+			SoftwareSerial sensorSerial;
+      bool sendSenseairCommand(const byte command[], bool validIfEchoed);
 		#endif
 
     void startManualCalibration();
