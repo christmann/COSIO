@@ -3,6 +3,7 @@
 
 #include <Arduino.h>  
 #include <ESP8266WiFi.h>
+#include <SoftwareSerial.h>
 
 class Utility {
 	private:
@@ -18,7 +19,6 @@ class Utility {
 		}
 
     String encryptionTypeStr(uint8_t authmode);
-
 };
 
 #endif

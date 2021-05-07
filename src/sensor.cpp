@@ -122,13 +122,13 @@ void Sensor::init(Oled* oled){
       }
       else{
         logger.printlog(logger.INFO, "SenseAir S8 CO2 sensor initialized");
-        if(CONFIG->useInbuildCalibration){
-          if (!sendSenseairCommand(enableABC, true)) break;
-        }
-        else {
-          if (!sendSenseairCommand(disableABC, true)) break;
-        }
-        logger.printlog(logger.INFO, "Automatic Baseline Correction was configured");
+        // if(CONFIG->useInbuildCalibration){
+        //   if (!sendSenseairCommand(enableABC, true)) break;
+        // }
+        // else {
+        //   if (!sendSenseairCommand(disableABC, true)) break;
+        // }
+        // logger.printlog(logger.INFO, "Automatic Baseline Correction was configured");
         return;
       }
     }

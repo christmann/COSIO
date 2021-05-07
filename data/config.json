@@ -12,14 +12,14 @@
     "dns": "0.0.0.0"
   },
   "sensor": {
-    "type": 2,
+    "type": 3,
     "id": "",
     "name": "",
     "senseInterval": 2,
     "ppmMax": 1500,
     "ppmNormal": 800,
     "showTemperature": false,
-    "useInbuildCalibration": false,
+    "useInbuildCalibration": true,
     "calibrateOnPwr": false,
     "lastManualCalibration": 0
   },
@@ -29,7 +29,7 @@
     "co2Unit": "ppm"
   },
   "led": {
-    "intensity": 60,
+    "intensity": 100,
     "displayMode": 0
   },
   "mqtt": {

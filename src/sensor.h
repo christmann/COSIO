@@ -4,7 +4,7 @@
 //  1: SCD30
 //  2: MH-Z19B / MH-Z19C
 //  3: SenseAir S8
-#define CO2_SENSOR_TYPE	2
+#define CO2_SENSOR_TYPE	3
 // calibration time in minutes
 #define CALIBRATE_TIME 20
 
