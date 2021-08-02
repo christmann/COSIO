@@ -40,6 +40,10 @@ unsigned long calibrationInit = 0;
 const byte readCO2[7] = {0xFE, 0X44, 0X00, 0X08, 0X02, 0X9F, 0X25};
 const byte disableABC[8] = {0xFE, 0x06, 0x00, 0x1F, 0x00, 0x00, 0xAC, 0x03};
 const byte enableABC[8] = {0xFE, 0x06, 0x00, 0x1F, 0x00, 0xB4, 0xAC, 0x74};
+const byte clearACKRegister[8] = {0xFE, 0x06, 0x00, 0x00, 0x00, 0x00, 0x9D, 0xC5};
+const byte backgroundCal[8] = {0xFE, 0x06, 0x00, 0x01, 0x7C, 0x06, 0x6C, 0xC7}; 
+const byte backgroundCalResult[8] = {0xFE, 0x03, 0x00, 0x00, 0x00, 0x01, 0x90, 0x05}; 
+const byte zeroCal[8] = {0xFE, 0x06, 0x00, 0x01, 0x7C, 0x07, 0x07, 0xAD}; 
 
 void Sensor::calibrate(){
   calibrationInit = millis();
@@ -113,7 +117,6 @@ void Sensor::init(Oled* oled){
     
     sensorSerial.begin(9600);
     delay(1000);
-
     for(int i = 0; i < 20; i++){
       if (!sensorSerial.available())
       {
@@ -147,6 +150,12 @@ void Sensor::startManualCalibration(){
     sensor.setForcedRecalibrationFactor(400);
   #elif CO2_SENSOR_TYPE == 2
     sensor.calibrate();
+  #elif CO2_SENSOR_TYPE == 3
+    logger.printlog(logger.INFO, "CLEAR ACK REGISTER");
+    this->sendSenseairCommand(clearACKRegister, false);
+    logger.printlog(logger.INFO, "START BACKGROUND CAL");
+    this->sendSenseairCommand(backgroundCal, false);
+    logger.printlog(logger.INFO, "DONE");
   #endif
   logger.printlog(logger.INFO, "Calibration was performed");
 }
@@ -236,13 +245,21 @@ bool Sensor::update(){
 
 #if CO2_SENSOR_TYPE == 3
 
+void Sensor::calibrateZeroPoint(){
+  logger.printlog(logger.INFO, "CLEAR ACK REGISTER");
+  this->sendSenseairCommand(clearACKRegister, false);
+  logger.printlog(logger.INFO, "START ZERO CAL");
+  this->sendSenseairCommand(zeroCal, false);
+  logger.printlog(logger.INFO, "DONE");
+}
+
 bool Sensor::sendSenseairCommand(const byte command[], bool validIfEchoed){
   
   logger.printlog(logger.INFO, "Sending bytes: ");
-  for (int i = 0; i < sizeof(command); i++) Serial.print(command[i], HEX);
+  for (int i = 0; i < 8; i++) Serial.print(command[i], HEX);
 
   while (!sensorSerial.available()) {
-    sensorSerial.write(command, sizeof(command));
+    sensorSerial.write(command, 8);
     delay(50);
   }
   

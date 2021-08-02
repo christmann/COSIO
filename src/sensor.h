@@ -52,14 +52,15 @@ class Sensor {
       bool sendSenseairCommand(const byte command[], bool validIfEchoed);
 		#endif
 
-    void startManualCalibration();
-
   public:
     static Sensor* instance() {
         if (!_instance)
             _instance = new Sensor();
         return _instance;
     }
+
+    void startManualCalibration();
+    void calibrateZeroPoint();
 
     void init(Oled* oled);
     void calibrate();

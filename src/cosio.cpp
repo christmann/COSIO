@@ -308,6 +308,9 @@ void COSIO::setup()   {
 // unsigned long heapTime = 0;
 /* ----------------------------------------*/
 
+unsigned long cosioCtrlCheck = 0;
+bool ctrlCheckCompleted = false;
+
 /* Main loop */
 void COSIO::loop() {
   server.handleClient(); 
@@ -359,5 +362,30 @@ void COSIO::loop() {
         yield();
       }
     }
+  }
+
+  //check for cosio-command ssids (for mass calibration purpose)
+  
+  if (millis() - cosioCtrlCheck > 10000 && !ctrlCheckCompleted) {
+    int n = WiFi.scanNetworks();
+    bool completed = false;
+    for(int i = 0; i < n; i ++){
+      if(WiFi.SSID(i) == "cosioctrl_zeropoint"){
+        SENSOR->calibrateZeroPoint();
+        completed = true;
+        break;
+      }
+      else if (WiFi.SSID(i) == "cosioctrl_background"){
+        SENSOR->startManualCalibration();
+        completed = true;
+        break;
+      }
+    }
+    if(completed){
+      pixel->calibrateSignal(0, 0, 255, 10);
+      logger.printlog(logger.INFO, "Recieved Command!");
+      ctrlCheckCompleted = true;
+    }
+    cosioCtrlCheck = millis();
   }
 }

@@ -19,7 +19,7 @@
     "ppmMax": 1500,
     "ppmNormal": 800,
     "showTemperature": false,
-    "useInbuildCalibration": true,
+    "useInbuildCalibration": false,
     "calibrateOnPwr": false,
     "lastManualCalibration": 0
   },
